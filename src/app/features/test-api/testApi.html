@@ -1,0 +1,49 @@
+@if (transactionsContent$ | async; as transactionsPage) {
+    
+    <h2>Dữ liệu Phân trang đã giải quyết (Toàn bộ PageTransactions)</h2>    
+    ---
+
+    <table z-table>
+        <caption>Danh sách các giao dịch (Trang {{ transactionsPage.pageable?.pageNumber }} / {{ transactionsPage.totalPages }}).</caption>
+
+        <thead>
+            <tr>
+                <th>Mã GD</th>
+                <th>Số tiền</th>
+                <th>Đối tác</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for (transaction of transactionsPage.content; track transaction.transactionId) {
+            <tr>
+                <td class="font-medium">{{ transaction.transactionCode }}</td>
+                <td>{{ transaction.amount | number }}</td>
+                <td>{{ transaction.partner?.name }}</td>
+                <td>{{ transaction.processStat }}</td>
+            </tr>
+        }
+        @empty {
+            <tr>
+                <td colspan="4" class="text-center py-4">Không có giao dịch nào trên trang này.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="flex items-center gap-3 mt-4">
+        <button (click)="prevPage()" [disabled]="transactionsPage.first">
+            Previous
+        </button>
+
+        <span>Trang {{ transactionsPage.pageable?.pageNumber }} / Tổng: {{ transactionsPage.totalPages }}</span>
+
+        <button (click)="nextPage()" [disabled]="transactionsPage.last">
+            Next
+        </button>
+    </div>
+}
+@else {
+    <p>Đang tải dữ liệu...</p>
+}
